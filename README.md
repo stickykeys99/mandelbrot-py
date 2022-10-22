@@ -17,6 +17,7 @@ Code could use some work, in particular the setting and resetting defaults by pr
 z - zoom out, x - zoom in  
 c - decrease resolution, v - increase  
 arrow keys to move  
+s to set back defaults
 
 Note that zooming increases/decreases resolution by a fixed small value
 
