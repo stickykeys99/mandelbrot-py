@@ -14,9 +14,9 @@ Code could use some work, in particular the setting and resetting defaults by pr
 
 ## Controls
 
-z - zoom out, x - zoom in
-c - decrease resolution, v - increase
-arrow keys to move
+z - zoom out, x - zoom in  
+c - decrease resolution, v - increase  
+arrow keys to move  
 
 Note that zooming increases/decreases resolution by a fixed small value
 
