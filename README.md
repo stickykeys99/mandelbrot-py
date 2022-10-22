@@ -5,7 +5,7 @@ pygame
 numba  
 numpy  
 
-Palette from https://lospec.com/palette-list/slso8
+Palette from https://lospec.com/palette-list/slso8  
 SLSO8 by Luis Miguel Maldonado
 
 This project is actually pretty ass, FPS drops all the way down to ~5 even with numba.
