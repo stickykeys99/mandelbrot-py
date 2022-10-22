@@ -1,6 +1,6 @@
 # mandelbrot-py
 
-Requirements:
+Requirements:  
 pygame  
 numba  
 numpy  
