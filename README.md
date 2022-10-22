@@ -1,9 +1,9 @@
 # mandelbrot-py
 
 Requirements:
-pygame
-numba
-numpy
+pygame  
+numba  
+numpy  
 
 Palette from https://lospec.com/palette-list/slso8
 SLSO8 by Luis Miguel Maldonado
