@@ -8,18 +8,15 @@ numpy
 Palette from https://lospec.com/palette-list/slso8  
 SLSO8 by Luis Miguel Maldonado
 
-This project is actually pretty ass, FPS drops all the way down to ~5 even with numba.
-
-Code could use some work, in particular the setting and resetting defaults by pressing S part.
-
 ## Controls
 
 z - zoom out, x - zoom in  
-c - decrease resolution, v - increase  
-arrow keys to move  
-s to set back defaults
+c - decrease focus, v - increase  
+arrow keys to move
 
-Note that zooming increases/decreases resolution by a fixed small value
+s to set back defaults (go back to default view)
+
+Note that zooming increases/decreases focus by a fixed small value. You would not normally have to increase/decrease focus yourself as this is automatically scaled by proportion.
 
 ## Screenshots
 
