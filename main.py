@@ -15,44 +15,47 @@ palette = pygame.image.load(dir_path+'/palette.png')
 palette_array = pygame.surfarray.array3d(palette)
 # palette_array = np.flip(palette_array,axis=0)
 
-# zoom rate = 1 / zoom
-# def is default
-def_zoom = 500
-zoom = def_zoom
-zoom_speed = 1.5
-# base offset to transform the coordinates with 0,0 in the center
-# vertical flipping not included here, and is done in the proceeding function
-base_offset = scr_size_array // 2
-base_offset[0] += 300
-# the below offset should be applied before zoom
-offset = np.array([0,0],dtype='float64')
-# offset speed is dependent on the zoom_speed, so will have to be recomputed as necessary
-base_num = def_zoom * 0.5
-offset_speed = base_num / zoom
-max_iter = 50
-max_iter_speed = 5
-dirty = 1
+def init_values():
+    global def_zoom, zoom, zoom_speed, base_offset, offset, base_num, offset_speed, max_iter, max_iter_speed, max_iter_min, max_iter_max, dirty
+    # zoom rate = 1 / zoom
+    # def is default
+    def_zoom = 500
+    zoom = def_zoom
+    zoom_speed = 1.01
+    # base offset to transform the coordinates with 0,0 in the center
+    base_offset = scr_size_array // 2
+    # offset to determine which point will be at the center of the screen
+    # used as the focus point for zoom
+    offset = np.array([-0.6,0],dtype='float64')
+    # offset speed is dependent on the zoom_speed, so will have to be recomputed as necessary
+    base_num = (def_zoom * 0.5) / 30
+    offset_speed = base_num / zoom
+    max_iter = 50
+    max_iter_speed = 0.2
+    max_iter_min = 2
+    max_iter_max = 500
+    dirty = 1
 
-# unfortunately i can't get the parallelization to work, it's the same fps with it or without
+    # if ever a button to change zoom_speed is introduced, this must also change max_iter at the same proportion (note that the former is a factor and modified by a t_factor exponentially, and the latter is an addend and modified by a t_factor multiplicatively), however offset_speed is already based off of zoom_speed 
+
+init_values()
+
+dt = 33.33
+base_fps = 30
+t_fact = dt * (base_fps/1000)
+
 @numba.njit(parallel=True)
-def generate_fractal(canvas_array,palette_array,max_iter,base_offset,offset,zoom):
-    # the max_iter being accessed here is not the same as the state of the global, it is converted to integer before putting in
+def generate_fractal(canvas_array,max_iter,offset,zoom):
     for row in numba.prange(canvas_array.shape[0]):
         for col in range(canvas_array.shape[1]):
-            coord = np.array([row,canvas_array.shape[1]-col],dtype='float64')
-            coord -= base_offset
-            coord += offset
-            coord = offset - ((offset - coord) / zoom)
-            c = np.cdouble(coord[0] + coord[1] * 1j)
+            c = (row - base_offset[0]) / zoom + offset[0] + 1j * ((col - base_offset[1]) / zoom + offset[1])
             num_iter = 0
             z = np.cdouble(0+0j)
-            for i in range(max_iter):
+            for i in range(max_iter-1):
                 z = (z ** 2) + c
-                if np.abs(z) > 2:
+                if z.real ** 2 + z.imag ** 2 > 4:
                     break
                 num_iter += 1
-            if num_iter >= max_iter:
-                num_iter = max_iter-1
             v = int(palette_array.shape[0] * num_iter / max_iter)
             canvas_array[row,col] = palette_array[v,0]
     return canvas_array
@@ -67,8 +70,10 @@ r_p_h_pan = 0
 # -1 for left
 
 r_p_v_pan = 0
-# 1 for up
-# -1 for down
+# 1 for down
+# -1 for up
+# flipped because pygame origin is at the topleft
+# also, the coordinates were not flipped in the updating function as mandelbrot is symmetrical with the x-axis
 
 is_running = True
 while is_running:
@@ -96,23 +101,7 @@ while is_running:
                 max_iter -= 10
                 dirty = 1
             if event.key == pygame.K_s:
-                # zoom rate = 1 / zoom
-                # def is default
-                def_zoom = 500
-                zoom = def_zoom
-                zoom_speed = 1.5
-                # base offset to transform the coordinates with 0,0 in the center
-                # vertical flipping not included here, and is done in the proceeding function
-                base_offset = scr_size_array // 2
-                base_offset[0] += 300
-                # the below offset should be applied before zoom
-                offset = np.array([0,0],dtype='float64')
-                # offset speed is dependent on the zoom_speed, so will have to be recomputed as necessary
-                base_num = def_zoom * 0.5
-                offset_speed = base_num / zoom
-                max_iter = 50
-                max_iter_speed = 5
-                dirty = 1
+                init_values()
             
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_z and r_p_zoom == 2:
@@ -131,38 +120,43 @@ while is_running:
     if r_p_zoom:
         dirty = 1
         offset_speed = (base_num / zoom)
+        dzoom = zoom_speed ** t_fact
+        dmax_iter = max_iter_speed * t_fact
         if r_p_zoom == 1:
-            zoom *= zoom_speed
-            max_iter += max_iter_speed
+            zoom *= dzoom
+            max_iter += dmax_iter
         else:
-            zoom /= zoom_speed
-            max_iter -= max_iter_speed
+            zoom /= dzoom
+            max_iter -= dmax_iter
     
-    if max_iter < 1:
-        max_iter = 1
+    max_iter = max(max_iter,max_iter_min)
+    max_iter = min(max_iter,max_iter_max)
     
     if r_p_h_pan:
         dirty = 1
         if r_p_h_pan == 1:
-            offset[0] += offset_speed
+            offset[0] += offset_speed * t_fact
         else:
-            offset[0] -= offset_speed
+            offset[0] -= offset_speed * t_fact
     
     if r_p_v_pan:
         dirty = 1
         if r_p_v_pan == 1:
-            offset[1] += offset_speed
+            offset[1] -= offset_speed * t_fact
         else:
-            offset[1] -= offset_speed
+            offset[1] += offset_speed * t_fact
 
     if dirty:
-        canvas_array = generate_fractal(canvas_array,palette_array,int(max_iter),base_offset,offset,zoom)
+        canvas_array = generate_fractal(canvas_array,int(max_iter),offset,zoom)
         pygame.surfarray.blit_array(scr,canvas_array)
         pygame.display.update()
-    dirty = 0
+    dirty = 1
+    # ^ resetting dirty to 0 has been disabled to better monitor fps
 
-    pygame.display.set_caption('FPS :' + str(int(clock.get_fps())))
-    dt = clock.tick(300)
+    pygame.display.set_caption(f'FPS: {clock.get_fps():.2f} | zoom: {zoom:.2f} | max_iter: {int(max_iter)}')
+    
+    dt = clock.tick(150)
+    t_fact = dt * (base_fps/1000)
 
 pygame.quit()
 sys.exit()
