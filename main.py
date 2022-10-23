@@ -36,7 +36,7 @@ def init_values():
     max_iter_max = 500
     dirty = 1
 
-    # if ever a button to change zoom_speed is introduced, this must also change max_iter at the same proportion (note that the former is a factor and modified by a t_factor exponentially, and the latter is an addend and modified by a t_factor multiplicatively), however offset_speed is already based off of zoom_speed 
+    # if ever a button to change zoom_speed is introduced, this must also change max_iter_speed at the same proportion (note that the former is a factor and modified by a t_factor exponentially, and the latter is an addend and modified by a t_factor multiplicatively), however offset_speed is already based off of zoom_speed 
 
 init_values()
 
