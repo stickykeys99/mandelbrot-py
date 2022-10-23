@@ -1,6 +1,5 @@
 # mandelbrot-py
 
-Uses:  
 python (3.10.8)  
 pygame (2.1.2)  
 numba (0.56.3)  
