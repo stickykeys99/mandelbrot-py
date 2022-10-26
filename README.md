@@ -28,11 +28,11 @@ After a certain max threshold, focus will no longer be automatically increased t
 
 ![scrnshot.png](screenshots/scrnshot.png)
 
-![scrnshot2.png](screenshots/scrnshot2.png)
+![scrnshot2.png](screenshots/scrnshot2.png?)
 
-![scrnshot3.png](screenshots/scrnshot3.png)
+![scrnshot3.png](screenshots/scrnshot3.png?)
 
-![scrnshot4.png](screenshots/scrnshot4.png)
+![scrnshot4.png](screenshots/scrnshot4.png?)
 
 ![scrnshot5.png](screenshots/scrnshot5.png)
 
