@@ -1,7 +1,7 @@
 import taichi as ti, taichi.math as tm, numpy as np
 import os, time, datetime
 
-ti.init(arch=ti.gpu, default_fp=ti.f64)
+ti.init(arch=ti.gpu,default_fp=ti.f64)
 
 # screen size
 width, height = 1920,1020
@@ -71,11 +71,11 @@ def render(active_palette: ti.template(), palette_length :ti.uint8, to_interpola
             col = active_palette[palette_length-1,0]
         else:
             v = (palette_length - 2) * num_iter / max_iter
-            if to_interpolate:
+            if to_interpolate == 0:
+                col = active_palette[ti.cast(tm.round(v),ti.uint8),0]
+            else:
                 q,e = tm.floor(v),tm.ceil(v)
                 col = ti.cast(tm.mix(active_palette[int(q),0],active_palette[int(e),0],v-int(v)),ti.uint8)
-            else:
-                col = active_palette[int(v),0]
         pixels[x,y] = col
 
 gui = ti.GUI('Mandelbrot Explorer', res=(width,height), fast_gui=True)
