@@ -1,8 +1,8 @@
 # mandelbrot-py
 
-python (3.10.8)
-taichi (1.1.3)
-numpy (1.23.4)
+python (3.10.8)  
+taichi (1.1.3)  
+numpy (1.23.4)  
 
 Made in Python using Taichi.
 
