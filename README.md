@@ -10,6 +10,20 @@ Uses your GPU unless it cannot find a suitable backend, then it will resort to u
 
 Tested at 1920 x 1020 resolution. Please note that this resolution is not dynamic, so you would have to manually edit this yourself for different screen sizes. (It's just a value pair, the rest of the work is done for you.)
 
+## How to Run
+
+First, install the necessary Python packages. You can do this by running the following command in your terminal:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+Then, run the following command in your terminal:
+
+```bash
+python3 main.py
+```
+
 ## Controls
 
 z - zoom out, x - zoom in  
